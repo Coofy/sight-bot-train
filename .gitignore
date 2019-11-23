@@ -1,0 +1,5 @@
+workspace/training_demo/annotations
+!workspace/training_demo/annotations/label_map.pbtxt
+
+workspace/training_demo/training
+!workspace/training_demo/training/ssdlite_mobilenet_v2_coco.config
