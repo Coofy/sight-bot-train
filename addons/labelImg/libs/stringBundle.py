@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
+import resources
 import os
 import sys
 import locale
@@ -14,6 +15,7 @@ except ImportError:
         sip.setapi('QVariant', 2)
     from PyQt4.QtCore import *
 
+DEFAULT_LOCALE = locale.getlocale()[0] if locale.getlocale() and len(locale.getlocale()) > 0 else os.getenv('LANG')
 
 class StringBundle:
 
@@ -27,15 +29,7 @@ class StringBundle:
             self.__loadBundle(path)
 
     @classmethod
-    def getBundle(cls, localeStr=None):
-        if localeStr is None:
-            try:
-                localeStr = locale.getlocale()[0] if locale.getlocale() and len(
-                    locale.getlocale()) > 0 else os.getenv('LANG')
-            except:
-                print('Invalid locale')
-                localeStr = 'en'
-
+    def getBundle(cls, localeStr=DEFAULT_LOCALE):
         return StringBundle(cls.__create_key, localeStr)
 
     def getString(self, stringId):

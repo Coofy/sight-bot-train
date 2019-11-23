@@ -26,9 +26,10 @@ except ImportError:
     from PyQt4.QtGui import *
     from PyQt4.QtCore import *
 
-from libs.resources import *
+import resources
+# Add internal libs
 from libs.constants import *
-from libs.utils import *
+from libs.lib import struct, newAction, newIcon, addActions, fmtShortcut, generateColorByText
 from libs.settings import Settings
 from libs.shape import Shape, DEFAULT_LINE_COLOR, DEFAULT_FILL_COLOR
 from libs.stringBundle import StringBundle
@@ -43,9 +44,20 @@ from libs.pascal_voc_io import XML_EXT
 from libs.yolo_io import YoloReader
 from libs.yolo_io import TXT_EXT
 from libs.ustr import ustr
+from libs.version import __version__
 from libs.hashableQListWidgetItem import HashableQListWidgetItem
 
 __appname__ = 'labelImg'
+
+# Utility functions and classes.
+
+def have_qstring():
+    '''p3/qt5 get rid of QString wrapper as py3 has native unicode str type'''
+    return not (sys.version_info.major >= 3 or QT_VERSION_STR.startswith('5.'))
+
+def util_qt_strlistclass():
+    return QStringList if have_qstring() else list
+
 
 class WindowMixin(object):
 
@@ -308,7 +320,7 @@ class MainWindow(QMainWindow, WindowMixin):
         labels.setText(getStr('showHide'))
         labels.setShortcut('Ctrl+Shift+L')
 
-        # Label list context menu.
+        # Lavel list context menu.
         labelMenu = QMenu()
         addActions(labelMenu, (edit, delete))
         self.labelList.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -474,7 +486,7 @@ class MainWindow(QMainWindow, WindowMixin):
 
         # Open Dir if deafult file
         if self.filePath and os.path.isdir(self.filePath):
-            self.openDirDialog(dirpath=self.filePath, silent=True)
+            self.openDirDialog(dirpath=self.filePath)
 
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Control:
@@ -601,7 +613,7 @@ class MainWindow(QMainWindow, WindowMixin):
         elif osName == 'Linux':
             return ['xdg-open']
         elif osName == 'Darwin':
-            return ['open']
+            return ['open', '-a', 'Safari']
 
     ## Callbacks ##
     def showTutorialDialog(self):
@@ -663,8 +675,6 @@ class MainWindow(QMainWindow, WindowMixin):
         if not self.canvas.editing():
             return
         item = self.currentItem()
-        if not item:
-            return
         text = self.labelDialog.popUp(item.text())
         if text is not None:
             item.setText(text)
@@ -748,12 +758,6 @@ class MainWindow(QMainWindow, WindowMixin):
         for label, points, line_color, fill_color, difficult in shapes:
             shape = Shape(label=label)
             for x, y in points:
-
-                # Ensure the labels are within the bounds of the image. If not, fix them.
-                x, y, snapped = self.canvas.snapPointToCanvas(x, y)
-                if snapped:
-                    self.setDirty()
-
                 shape.addPoint(QPointF(x, y))
             shape.difficult = difficult
             shape.close()
@@ -965,19 +969,13 @@ class MainWindow(QMainWindow, WindowMixin):
         # Make sure that filePath is a regular python string, rather than QString
         filePath = ustr(filePath)
 
-        # Fix bug: An  index error after select a directory when open a new file.
         unicodeFilePath = ustr(filePath)
-        unicodeFilePath = os.path.abspath(unicodeFilePath)
         # Tzutalin 20160906 : Add file list and dock to move faster
         # Highlight the file item
         if unicodeFilePath and self.fileListWidget.count() > 0:
-            if unicodeFilePath in self.mImgList:
-                index = self.mImgList.index(unicodeFilePath)
-                fileWidgetItem = self.fileListWidget.item(index)
-                fileWidgetItem.setSelected(True)
-            else:
-                self.fileListWidget.clear()
-                self.mImgList.clear()
+            index = self.mImgList.index(unicodeFilePath)
+            fileWidgetItem = self.fileListWidget.item(index)
+            fileWidgetItem.setSelected(True)
 
         if unicodeFilePath and os.path.exists(unicodeFilePath):
             if LabelFile.isLabelFile(unicodeFilePath):
@@ -1134,7 +1132,7 @@ class MainWindow(QMainWindow, WindowMixin):
                     relativePath = os.path.join(root, file)
                     path = ustr(os.path.abspath(relativePath))
                     images.append(path)
-        natural_sort(images, key=lambda x: x.lower())
+        images.sort(key=lambda x: x.lower())
         return images
 
     def changeSavedirDialog(self, _value=False):
@@ -1170,7 +1168,7 @@ class MainWindow(QMainWindow, WindowMixin):
                     filename = filename[0]
             self.loadPascalXMLByFilename(filename)
 
-    def openDirDialog(self, _value=False, dirpath=None, silent=False):
+    def openDirDialog(self, _value=False, dirpath=None):
         if not self.mayContinue():
             return
 
@@ -1179,13 +1177,10 @@ class MainWindow(QMainWindow, WindowMixin):
             defaultOpenDirPath = self.lastOpenDir
         else:
             defaultOpenDirPath = os.path.dirname(self.filePath) if self.filePath else '.'
-        if silent!=True :
-            targetDirPath = ustr(QFileDialog.getExistingDirectory(self,
-                                                         '%s - Open Directory' % __appname__, defaultOpenDirPath,
-                                                         QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks))
-        else:
-            targetDirPath = ustr(defaultOpenDirPath)
 
+        targetDirPath = ustr(QFileDialog.getExistingDirectory(self,
+                                                     '%s - Open Directory' % __appname__, defaultOpenDirPath,
+                                                     QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks))
         self.importDirImages(targetDirPath)
 
     def importDirImages(self, dirpath):
