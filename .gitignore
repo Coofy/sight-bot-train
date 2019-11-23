@@ -1,3 +1,5 @@
+models
+
 workspace/training_demo/annotations
 !workspace/training_demo/annotations/label_map.pbtxt
 
