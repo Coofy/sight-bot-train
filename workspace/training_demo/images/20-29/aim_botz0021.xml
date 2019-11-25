@@ -1,7 +1,7 @@
-<annotation verified="yes">
-	<folder>test</folder>
-	<filename>aim_botz0026.png</filename>
-	<path>/home/icaro-lima/Documents/Python/sight-bot-train/workspace/training_demo/images/test/aim_botz0026.png</path>
+<annotation>
+	<folder>20-29</folder>
+	<filename>aim_botz0021.png</filename>
+	<path>/home/icaro-lima/Documents/Python/sight-bot-train/workspace/training_demo/images/20-29/aim_botz0021.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -12,27 +12,27 @@
 	</size>
 	<segmented>0</segmented>
 	<object>
-		<name>ct head</name>
+		<name>tr head</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>348</xmin>
-			<ymin>422</ymin>
-			<xmax>395</xmax>
-			<ymax>473</ymax>
+			<xmin>14</xmin>
+			<ymin>87</ymin>
+			<xmax>110</xmax>
+			<ymax>207</ymax>
 		</bndbox>
 	</object>
 	<object>
-		<name>ct head</name>
+		<name>tr head</name>
 		<pose>Unspecified</pose>
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>813</xmin>
-			<ymin>367</ymin>
-			<xmax>930</xmax>
-			<ymax>506</ymax>
+			<xmin>906</xmin>
+			<ymin>140</ymin>
+			<xmax>935</xmax>
+			<ymax>178</ymax>
 		</bndbox>
 	</object>
 </annotation>
