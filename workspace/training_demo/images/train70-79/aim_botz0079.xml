@@ -1,7 +1,7 @@
 <annotation>
-	<folder>train</folder>
+	<folder>train70-79</folder>
 	<filename>aim_botz0079.png</filename>
-	<path>/home/icaro-lima/Documents/Python/sight-bot-train/workspace/training_demo/images/train/aim_botz0079.png</path>
+	<path>/home/icaro-lima/Documents/Python/sight-bot-train/workspace/training_demo/images/train70-79/aim_botz0079.png</path>
 	<source>
 		<database>Unknown</database>
 	</source>
@@ -17,9 +17,9 @@
 		<truncated>0</truncated>
 		<difficult>0</difficult>
 		<bndbox>
-			<xmin>503</xmin>
-			<ymin>343</ymin>
-			<xmax>516</xmax>
+			<xmin>500</xmin>
+			<ymin>340</ymin>
+			<xmax>520</xmax>
 			<ymax>362</ymax>
 		</bndbox>
 	</object>
