@@ -2,6 +2,8 @@
 
 Based on [this](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/training.html) tutorial
 
+If you want to see the inference (execution): https://github.com/Coofy/sight-bot
+
 ## Setup
 ```
 Miniconda:
